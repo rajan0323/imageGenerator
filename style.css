@@ -146,12 +146,16 @@ main {
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease-in-out;
+    height: 300px; /* Set a fixed height for image containers */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .images-container .imageDiv img {
     width: 100%;
-    height: auto;
-    display: block;
+    height: 100%;
+    object-fit: cover; /* Ensure images cover the container while maintaining aspect ratio */
     transition: transform 0.3s ease-in-out;
 }
 
@@ -373,4 +377,6 @@ body.dark-mode .load-more {
 body.dark-mode footer {
     background-color: #222;
 }
+
+
 
