@@ -1,4 +1,4 @@
-const accessKey = 'KXUXHWj868d0Bju55qNLlABwJYs8CaUkzKjnN6PjHv0';// Make sure this is a valid Unsplash API key
+const accessKey = 'KXUXHWj868d0Bju55qNLlABwJYs8CaUkzKjnN6PjHv0'; // Make sure this is a valid Unsplash API key
 let currentPage = 1;
 let currentQuery = '';
 let totalPages = 1;
@@ -48,6 +48,9 @@ const fetchImages = async (query, pageNo) => {
 
     try {
         const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
 
         if (pageNo === 1) {
@@ -93,6 +96,9 @@ const fetchSuggestions = async (query) => {
 
     try {
         const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
 
         suggestions.innerHTML = '';
@@ -185,3 +191,5 @@ window.addEventListener('click', (e) => {
         modal.style.display = 'none';
     }
 });
+
+ 
