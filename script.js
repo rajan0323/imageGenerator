@@ -1,4 +1,4 @@
-const accessKey = 'KXUXHWj868d0Bju55qNLlABwJYs8CaUkzKjnN6PjHv0';
+const accessKey = 'KXUXHWj868d0Bju55qNLlABwJYs8CaUkzKjnN6PjHv0'; // Make sure this is a valid Unsplash API key
 let currentPage = 1;
 let currentQuery = '';
 let totalPages = 1;
@@ -23,7 +23,7 @@ const closeModal = document.getElementsByClassName('close')[0];
 
 // Function to fetch images using Unsplash API
 const fetchImages = async (query, pageNo) => {
-    let url = `https://api.unsplash.com/search/photos?query=${query}&per_page=12&page=${pageNo}&client_id=${accessKey}`;
+    let url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=12&page=${pageNo}&client_id=${accessKey}`;
 
     const category = categoryFilter.value;
     const color = colorFilter.value;
@@ -31,19 +31,19 @@ const fetchImages = async (query, pageNo) => {
     const sort = sortFilter.value;
 
     if (category) {
-        url += `&categories=${category}`;
+        url += `&category=${encodeURIComponent(category)}`;
     }
 
     if (color) {
-        url += `&color=${color}`;
+        url += `&color=${encodeURIComponent(color)}`;
     }
 
     if (orientation) {
-        url += `&orientation=${orientation}`;
+        url += `&orientation=${encodeURIComponent(orientation)}`;
     }
 
     if (sort) {
-        url += `&order_by=${sort}`;
+        url += `&order_by=${encodeURIComponent(sort)}`;
     }
 
     try {
@@ -89,7 +89,7 @@ const fetchSuggestions = async (query) => {
         return;
     }
 
-    let url = `https://api.unsplash.com/search/photos?query=${query}&per_page=5&client_id=${accessKey}`;
+    let url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=5&client_id=${accessKey}`;
 
     try {
         const response = await fetch(url);
