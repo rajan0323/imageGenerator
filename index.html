@@ -2,39 +2,85 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Search App</title>
+    <title>Advanced Image Search App</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <header>
-        <h1>Image Search App</h1>
-        <form action="">
-            <div class="search-container">
-                <input type="text" placeholder="Search Image" class="Search-input"/>
-                <span class="material-icons">search</span>
-            </div>
-        </form>
+        <div class="header-container">
+            <h1>Image Search App</h1>
+            <form id="search-form">
+                <div class="search-container">
+                    <input type="text" placeholder="Search Images" class="search-input" id="search-input">
+                    <div id="suggestions"></div>
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="filters">
+                    <label for="category-filter">Category:</label>
+                    <select id="category-filter">
+                        <option value="">All</option>
+                        <option value="nature">Nature</option>
+                        <option value="architecture">Architecture</option>
+                        <option value="technology">Technology</option>
+                        <option value="food">Food</option>
+                    </select>
+                    <label for="color-filter">Color:</label>
+                    <select id="color-filter">
+                        <option value="">Any</option>
+                        <option value="black_and_white">Black and White</option>
+                        <option value="green">Green</option>
+                        <option value="blue">Blue</option>
+                        <option value="yellow">Yellow</option>
+                    </select>
+                    <label for="orientation-filter">Orientation:</label>
+                    <select id="orientation-filter">
+                        <option value="">Any</option>
+                        <option value="landscape">Landscape</option>
+                        <option value="portrait">Portrait</option>
+                    </select>
+                    <label for="sort-filter">Sort by:</label>
+                    <select id="sort-filter">
+                        <option value="relevant">Relevant</option>
+                        <option value="latest">Latest</option>
+                        <option value="popular">Popular</option>
+                    </select>
+                    <label for="dark-mode-toggle">Dark Mode:</label>
+                    <input type="checkbox" id="dark-mode-toggle">
+                </div>
+            </form>
+        </div>
     </header>
     <main>
         <section>
-            <div class="images-container">
-                <h2>No Image to show.</h2>
+            <div class="images-container" id="images-container">
+                <!-- Images will be dynamically added here -->
             </div>
-            <button class="load-more">Load More</button>
+            <div class="pagination">
+                <button id="prev-button" class="pagination-button">Previous</button>
+                <span id="page-info"></span>
+                <button id="next-button" class="pagination-button">Next</button>
+            </div>
+            <button class="load-more" id="load-more">Load More</button>
         </section>
     </main>
     <footer>
-        <div class="contact-info">
-            <a href="https://www.linkedin.com/in/rajan-kumar-080245232/" target="_blank"><i class="fab fa-linkedin"></i> LinkedIn</a>
-            <a href="https://www.instagram.com/ra.jan0323/" target="_blank"><i class="fab fa-instagram"></i> Instagram</a>
-            <a href="mailto:rajankummaar@gmail.com"><i class="fas fa-envelope"></i> Email</a>
+        <div class="footer-container">
+            <div class="contact-info">
+                <a href="https://www.linkedin.com/in/rajan-kumar-080245232/" target="_blank"><i class="fab fa-linkedin"></i> LinkedIn</a>
+                <a href="https://www.instagram.com/ra.jan0323/" target="_blank"><i class="fab fa-instagram"></i> Instagram</a>
+                <a href="mailto:rajankummaar@gmail.com"><i class="fas fa-envelope"></i> Email</a>
+            </div>
+            <p>Designed by Rajan Kumar &copy; 2024</p>
         </div>
-        <p>Designed by Rajan Kumar &copy; 2024</p>
     </footer>
+    <div id="image-modal" class="modal">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="modal-image">
+        <div id="caption"></div>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
