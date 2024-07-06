@@ -1,60 +1,123 @@
 const accessKey = 'KXUXHWj868d0Bju55qNLlABwJYs8CaUkzKjnN6PjHv0';
-const searchForm = document.querySelector('form');
-const searchContainer = document.querySelector('.images-container');
-const searchInput = document.querySelector('.Search-input');
-const loadMoreButton = document.querySelector('.load-more');
-
 let currentPage = 1;
 let currentQuery = '';
+let totalPages = 1;
+
+const searchForm = document.getElementById('search-form');
+const searchInput = document.getElementById('search-input');
+const categoryFilter = document.getElementById('category-filter');
+const colorFilter = document.getElementById('color-filter');
+const orientationFilter = document.getElementById('orientation-filter');
+const sortFilter = document.getElementById('sort-filter');
+const imagesContainer = document.getElementById('images-container');
+const loadMoreButton = document.getElementById('load-more');
+const prevButton = document.getElementById('prev-button');
+const nextButton = document.getElementById('next-button');
+const pageInfo = document.getElementById('page-info');
+const darkModeToggle = document.getElementById('dark-mode-toggle');
+const suggestions = document.getElementById('suggestions');
+const modal = document.getElementById('image-modal');
+const modalImage = document.getElementById('modal-image');
+const caption = document.getElementById('caption');
+const closeModal = document.getElementsByClassName('close')[0];
 
 // Function to fetch images using Unsplash API
 const fetchImages = async (query, pageNo) => {
-    if (pageNo === 1) {
-        searchContainer.innerHTML = '<h2>Loading...</h2>'; // Display loading message
+    let url = `https://api.unsplash.com/search/photos?query=${query}&per_page=12&page=${pageNo}&client_id=${accessKey}`;
+
+    const category = categoryFilter.value;
+    const color = colorFilter.value;
+    const orientation = orientationFilter.value;
+    const sort = sortFilter.value;
+
+    if (category) {
+        url += `&categories=${category}`;
     }
-    const url = `https://api.unsplash.com/search/photos?query=${query}&per_page=28&page=${pageNo}&client_id=${accessKey}`;
+
+    if (color) {
+        url += `&color=${color}`;
+    }
+
+    if (orientation) {
+        url += `&orientation=${orientation}`;
+    }
+
+    if (sort) {
+        url += `&order_by=${sort}`;
+    }
+
     try {
         const response = await fetch(url);
         const data = await response.json();
+
         if (pageNo === 1) {
-            searchContainer.innerHTML = ''; // Clear previous results for new search
+            imagesContainer.innerHTML = ''; // Clear previous results
         }
 
         if (data.results.length === 0) {
-            searchContainer.innerHTML = '<h2>No images found.</h2>';
-            loadMoreButton.style.display = 'none'; // Hide load more button if no images found
+            imagesContainer.innerHTML = '<h2>No images found.</h2>';
+            loadMoreButton.style.display = 'none';
         } else {
             data.results.forEach(photo => {
                 const imageElement = document.createElement('div');
                 imageElement.classList.add('imageDiv');
-                imageElement.innerHTML = `<img src="${photo.urls.regular}" alt="${photo.alt_description}"/>`;
-                
-                // Creating overlay
-                const overlayElement = document.createElement('div');
-                overlayElement.classList.add('overlay');
-                const overlayText = document.createElement('h3');
-                overlayText.innerText = photo.alt_description || 'No description available'; // Example overlay text
-                overlayElement.appendChild(overlayText);
-                imageElement.appendChild(overlayElement);
-                
-                searchContainer.appendChild(imageElement);
+                imageElement.innerHTML = `<img src="${photo.urls.regular}" alt="${photo.alt_description}" data-full-url="${photo.urls.full}" data-description="${photo.description || photo.alt_description}"/>`;
+                imagesContainer.appendChild(imageElement);
             });
 
+            totalPages = data.total_pages;
+
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+
             if (data.total_pages <= pageNo) {
-                loadMoreButton.style.display = 'none'; // Hide load more button if no more pages
+                loadMoreButton.style.display = 'none';
             } else {
-                loadMoreButton.style.display = 'block'; // Show load more button if there are more pages
+                loadMoreButton.style.display = 'block';
             }
         }
     } catch (error) {
-        searchContainer.innerHTML = '<h2>Failed to fetch images. Please try again.</h2>';
         console.error('Error fetching images:', error);
-        loadMoreButton.style.display = 'none'; // Hide load more button if an error occurs
+        imagesContainer.innerHTML = '<h2>Failed to fetch images. Please try again.</h2>';
+        loadMoreButton.style.display = 'none';
     }
-}
+};
 
-// Adding event listener to search form
-searchForm.addEventListener('submit', (e) => {
+// Function to fetch search suggestions
+const fetchSuggestions = async (query) => {
+    if (query.length < 3) {
+        suggestions.innerHTML = '';
+        return;
+    }
+
+    let url = `https://api.unsplash.com/search/photos?query=${query}&per_page=5&client_id=${accessKey}`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        suggestions.innerHTML = '';
+
+        if (data.results.length > 0) {
+            data.results.forEach(photo => {
+                const suggestion = document.createElement('div');
+                suggestion.textContent = photo.alt_description;
+                suggestion.addEventListener('click', () => {
+                    searchInput.value = photo.alt_description;
+                    currentQuery = photo.alt_description;
+                    currentPage = 1;
+                    fetchImages(currentQuery, currentPage);
+                    suggestions.innerHTML = '';
+                });
+                suggestions.appendChild(suggestion);
+            });
+        }
+    } catch (error) {
+        console.error('Error fetching suggestions:', error);
+    }
+};
+
+// Event listener for search form submission
+searchForm.addEventListener('submit', e => {
     e.preventDefault();
     const inputText = searchInput.value.trim();
     if (inputText !== '') {
@@ -62,15 +125,63 @@ searchForm.addEventListener('submit', (e) => {
         currentPage = 1; // Reset page number for new search
         fetchImages(currentQuery, currentPage);
     } else {
-        searchContainer.innerHTML = '<h2>Please enter a search query.</h2>';
-        loadMoreButton.style.display = 'none'; // Hide load more button if no query
+        imagesContainer.innerHTML = '<h2>Please enter a search query.</h2>';
+        loadMoreButton.style.display = 'none';
     }
 });
 
-// Adding event listener to load more button
+// Event listener for load more button
 loadMoreButton.addEventListener('click', () => {
     if (currentQuery !== '') {
-        currentPage += 1; // Increment page number
+        currentPage++;
         fetchImages(currentQuery, currentPage);
+    }
+});
+
+// Event listener for previous button
+prevButton.addEventListener('click', () => {
+    if (currentPage > 1) {
+        currentPage--;
+        fetchImages(currentQuery, currentPage);
+    }
+});
+
+// Event listener for next button
+nextButton.addEventListener('click', () => {
+    if (currentPage < totalPages) {
+        currentPage++;
+        fetchImages(currentQuery, currentPage);
+    }
+});
+
+// Event listener for search input
+searchInput.addEventListener('input', () => {
+    const inputText = searchInput.value.trim();
+    fetchSuggestions(inputText);
+});
+
+// Event listener for dark mode toggle
+darkModeToggle.addEventListener('change', () => {
+    document.body.classList.toggle('dark-mode');
+});
+
+// Event listener for image click to open modal
+imagesContainer.addEventListener('click', (e) => {
+    if (e.target.tagName === 'IMG') {
+        modal.style.display = 'block';
+        modalImage.src = e.target.getAttribute('data-full-url');
+        caption.textContent = e.target.getAttribute('data-description');
+    }
+});
+
+// Event listener for closing the modal
+closeModal.addEventListener('click', () => {
+    modal.style.display = 'none';
+});
+
+// Event listener for closing the modal when clicking outside of the image
+window.addEventListener('click', (e) => {
+    if (e.target === modal) {
+        modal.style.display = 'none';
     }
 });
