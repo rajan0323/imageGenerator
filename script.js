@@ -1,4 +1,4 @@
-const accessKey = 'KXUXHWj868d0Bju55qNLlABwJYs8CaUkzKjnN6PjHv0'; // Make sure this is a valid Unsplash API key
+const accessKey = 'KXUXHWj868d0Bju55qNLlABwJYs8CaUkzKjnN6PjHv0';// Make sure this is a valid Unsplash API key
 let currentPage = 1;
 let currentQuery = '';
 let totalPages = 1;
